@@ -27,6 +27,3 @@ EXPOSE 8080
 # Run the Spring Boot application
 CMD ["java", "-jar", "app.jar"]
 
-
-# # Run the command to start the Spring Boot application
-# CMD ["java", "-jar", "spring-boot-react.jar"]
