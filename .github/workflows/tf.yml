@@ -1,9 +1,8 @@
 name: Terraform Pipeline
 
 on:
-#   push:
-#     branches:
-#       - develop
+  push:
+    branches: [ develop ]
   workflow_dispatch:
     inputs:
       action:
