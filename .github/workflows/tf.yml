@@ -52,14 +52,18 @@ jobs:
         run: terraform plan -out=tfplan
 
       # Apply Terraform Changes
-      - name: Terraform Apply
-        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve tfplan
+      # - name: Terraform Apply
+      #   if: github.event_name == 'push' || github.event.inputs.action == 'apply'
+      #   run: terraform apply -auto-approve tfplan
 
   destroy:
     name: Terraform Cleanup
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.inputs.action == 'destroy' # Trigger only for destroy input
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform/ecs-fargate
     steps:
       # Checkout repository
       - name: Checkout Repository
