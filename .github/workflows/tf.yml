@@ -1,15 +1,15 @@
 name: Terraform Pipeline
 
 on:
-  # push:
-  #   branches:
-  #     - ft/develop
+  push:
+    branches:
+      - ft/develop
   workflow_dispatch:
-    # inputs:
-    #   action:
-    #     description: 'Choose the Terraform action (apply/destroy)'
-    #     required: true
-    #     default: 'destroy'
+    inputs:
+      action:
+        description: 'Choose the Terraform action (apply/destroy)'
+        required: true
+        default: 'destroy'
 
 env:
   # verbosity setting for Terraform logs
