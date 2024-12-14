@@ -1,0 +1,19 @@
+name: Basic Test Workflow
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Print a Hello World message
+      - name: Hello World
+        run: echo "Hello, World!"
