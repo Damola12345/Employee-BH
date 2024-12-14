@@ -59,7 +59,7 @@ jobs:
   destroy:
     name: Terraform Cleanup
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event.inputs.action == 'destroy' # Trigger only for destroy input
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'destroy' # Trigger only for destroy input
     steps:
       # Checkout repository
       - name: Checkout Repository
