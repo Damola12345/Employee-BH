@@ -4,12 +4,12 @@ on:
   push:
     branches:
     - develop
-  workflow_dispatch:
-    inputs:
-      action:
-        description: 'Choose the Terraform action (apply/destroy)'
-        required: true
-        default: 'apply'
+#   workflow_dispatch:
+#     inputs:
+#       action:
+#         description: 'Choose the Terraform action (apply/destroy)'
+#         required: true
+#         default: 'apply'
 
 
 env:
