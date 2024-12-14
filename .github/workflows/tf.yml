@@ -3,14 +3,13 @@ name: Terraform Pipeline
 on:
   push:
     branches:
-    - develop
-#   workflow_dispatch:
-#     inputs:
-#       action:
-#         description: 'Choose the Terraform action (apply/destroy)'
-#         required: true
-#         default: 'apply'
-
+      - develop
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose the Terraform action (apply/destroy)'
+        required: true
+        default: 'apply'
 
 env:
   # verbosity setting for Terraform logs
@@ -27,7 +26,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        # We keep Terraform files in the terraform directory.
         working-directory: ./terraform/ecs-fargate
 
     steps:
@@ -39,7 +37,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.6 # Update to the required Terraform version
+          terraform_version: 1.5.6
 
       # Initialize Terraform
       - name: Terraform Init
@@ -80,4 +78,3 @@ jobs:
       # Destroy Terraform Resources
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
-
