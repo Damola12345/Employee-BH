@@ -1,0 +1,6 @@
+docker container run \
+    --name mysql_dummy \
+    --publish 3306:3306 \
+    --env MYSQL_ROOT_PASSWORD=mysQl_dummY_pwd \
+    --detach \
+    mysql:latest
