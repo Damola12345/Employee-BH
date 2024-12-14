@@ -1,0 +1,88 @@
+name: Terraform Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+#   pull_request:
+#     branches:
+#       - main
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose the Terraform action (apply/destroy)'
+        required: true
+        default: 'apply'
+
+
+env:
+ # verbosity setting for Terraform logs
+ TF_LOG: INFO
+ # Credentials for deployment to AWS
+ AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+ AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+ AWS_REGION: eu-west-1
+
+
+jobs:
+  terraform:
+    name: Terraform Workflow
+    runs-on: ubuntu-latest
+    defaults:
+     run:
+       shell: bash
+       # We keep Terraform files in the terraform directory.
+       working-directory: ./terraform/ecs-fargate
+
+    steps:
+      # Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.6 # Update to the required Terraform version
+
+      # Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Validate Terraform
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      # Apply Terraform Changes (Optional: Only on main branch or approval)
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        run: terraform apply -auto-approve tfplan
+
+  destroy:
+    name: Terraform Cleanup
+    needs: terraform
+    runs-on: ubuntu-latest
+    if: github.event.inputs.action == 'destroy' # Trigger only if `destroy` input is passed
+
+    steps:
+      # Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.6
+
+      # Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Destroy Terraform Resources
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
