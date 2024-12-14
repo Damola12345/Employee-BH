@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - develop
-#   pull_request:
-#     branches:
-#       - main
   workflow_dispatch:
     inputs:
       action:
@@ -16,23 +13,22 @@ on:
 
 
 env:
- # verbosity setting for Terraform logs
- TF_LOG: INFO
- # Credentials for deployment to AWS
- AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
- AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
- AWS_REGION: eu-west-1
-
+  # verbosity setting for Terraform logs
+  TF_LOG: INFO
+  # Credentials for deployment to AWS
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: eu-west-1
 
 jobs:
   terraform:
     name: Terraform Workflow
     runs-on: ubuntu-latest
     defaults:
-     run:
-       shell: bash
-       # We keep Terraform files in the terraform directory.
-       working-directory: ./terraform/ecs-fargate
+      run:
+        shell: bash
+        # We keep Terraform files in the terraform directory.
+        working-directory: ./terraform/ecs-fargate
 
     steps:
       # Checkout repository
@@ -57,17 +53,15 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      # Apply Terraform Changes (Optional: Only on main branch or approval)
+      # Apply Terraform Changes
       - name: Terraform Apply
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
         run: terraform apply -auto-approve tfplan
 
   destroy:
     name: Terraform Cleanup
-    needs: terraform
     runs-on: ubuntu-latest
-    if: github.event.inputs.action == 'destroy' # Trigger only if `destroy` input is passed
-
+    if: github.event.inputs.action == 'destroy' # Trigger only for destroy input
     steps:
       # Checkout repository
       - name: Checkout Repository
@@ -86,3 +80,4 @@ jobs:
       # Destroy Terraform Resources
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
+
