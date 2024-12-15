@@ -1,10 +1,6 @@
 name: Terraform Pipeline
 
 on:
-  push:
-    branches:
-      - ft/develop
-
   workflow_dispatch:
     inputs:
       action:
@@ -46,20 +42,24 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      # Run Terraform Plan
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan
-
-      # Apply or Destroy based on input
+      # Run Terraform Action
       - name: Run Terraform Action
         run: |
-          if [ "${{ github.event.inputs.action }}" == "apply" ]; then
+          action="${{ github.event.inputs.action }}"
+          if [ -z "$action" ]; then
+            echo "No action specified. Defaulting to 'apply'."
+            action="apply"
+          fi
+
+          if [ "$action" == "apply" ]; then
             echo "Applying Terraform changes..."
+            terraform plan -out=tfplan
             terraform apply -auto-approve tfplan
-          elif [ "${{ github.event.inputs.action }}" == "destroy" ]; then
+          elif [ "$action" == "destroy" ]; then
             echo "Destroying Terraform resources..."
             terraform destroy -auto-approve
           else
             echo "Invalid action. Only 'apply' or 'destroy' are supported."
             exit 1
           fi
+
