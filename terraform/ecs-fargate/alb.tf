@@ -105,17 +105,17 @@ resource "aws_lb_listener_rule" "backend_rule" {
 }
 
 # Rule for /Payroll* with priority 2
-resource "aws_lb_listener_rule" "backend_payroll_rule" {
-  listener_arn = aws_lb_listener.alb-listener-ssl-certificate.arn
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.backend-tg.arn
-  }
-  condition {
-    path_pattern {
-      values = ["/Payroll*"]
-    }
-  }
-  priority   = 2
-  depends_on = [aws_lb_target_group.backend-tg]
-}
+# resource "aws_lb_listener_rule" "backend_payroll_rule" {
+#   listener_arn = aws_lb_listener.alb-listener-ssl-certificate.arn
+#   action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.backend-tg.arn
+#   }
+#   condition {
+#     path_pattern {
+#       values = ["/Payroll*"]
+#     }
+#   }
+#   priority   = 2
+#   depends_on = [aws_lb_target_group.backend-tg]
+# }

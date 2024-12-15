@@ -30,7 +30,7 @@ jobs:
       id: build-frontend-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-frontend.outputs.registry }}
-        ECR_REPOSITORY: frontend-app
+        ECR_REPOSITORY: frontend-ap
         IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f frontend/dockerfile.frontend frontend/
@@ -67,7 +67,7 @@ jobs:
       id: build-backend-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-backend.outputs.registry }}
-        ECR_REPOSITORY: backend-app
+        ECR_REPOSITORY: backend-ap
         IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f dockerfile.backend

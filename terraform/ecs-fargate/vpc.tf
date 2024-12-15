@@ -145,7 +145,7 @@ resource "aws_network_acl" "db_private_nacl" {
     protocol   = "-1"
     rule_no    = 100
     action     = "allow"
-    cidr_block = "10.0.0.0/16" # Restrict to the VPC CIDR block or specific IP ranges for security.
+    cidr_block = "0.0.0.0/0" 
     from_port  = 0
     to_port    = 0
   }

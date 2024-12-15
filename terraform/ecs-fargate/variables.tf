@@ -65,11 +65,11 @@ variable "memory" {
 }
 
 variable "backend_image" {
-  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/backend-app"
+  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/backend-ap"
   description   = "backend image"
 }
 variable "frontend_image" {
-  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/frontend-app"
+  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/frontend-ap"
   description   = "frontend image"
 }
 

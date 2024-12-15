@@ -43,6 +43,7 @@ resource "aws_ecs_task_definition" "frontend-task" {
    }
  ])
 }
+
 # Backend Task Definition
 resource "aws_ecs_task_definition" "backend-task" {
   family                   = "backend-task"
