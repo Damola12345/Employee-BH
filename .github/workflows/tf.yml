@@ -1,84 +1,65 @@
-# name: Terraform Pipeline
+name: Terraform Pipeline
 
-# on:
-#   push:
-#     branches:
-#       - ft/develop
-#   workflow_dispatch:
-#     inputs:
-#       action:
-#         description: 'Choose the Terraform action (apply/destroy)'
-#         required: true
-#         default: 'destroy'
+on:
+  push:
+    branches:
+      - ft/develop
 
-# env:
-#   # verbosity setting for Terraform logs
-#   TF_LOG: INFO
-#   # Credentials for deployment to AWS
-#   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#   AWS_REGION: eu-west-1
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose the Terraform action (apply/destroy)'
+        required: true
+        default: 'apply'
 
-# jobs:
-#   terraform:
-#     name: Terraform Workflow
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         shell: bash
-#         working-directory: ./terraform/ecs-fargate
+env:
+  TF_LOG: INFO
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: eu-west-1
 
-#     steps:
-#       # Checkout repository
-#       - name: Checkout Repository
-#         uses: actions/checkout@v3
+jobs:
+  terraform:
+    name: Terraform Workflow
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform/ecs-fargate
 
-#       # Setup Terraform
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v2
-#         with:
-#           terraform_version: 1.5.6
+    steps:
+      # Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-#       # Initialize Terraform
-#       - name: Terraform Init
-#         run: terraform init
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.6
 
-#       # Validate Terraform
-#       - name: Terraform Validate
-#         run: terraform validate
+      # Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
 
-#       # Terraform Plan
-#       - name: Terraform Plan
-#         run: terraform plan -out=tfplan
+      # Validate Terraform
+      - name: Terraform Validate
+        run: terraform validate
 
-#       # Apply Terraform Changes
-#       # - name: Terraform Apply
-#       #   if: github.event_name == 'push' || github.event.inputs.action == 'apply'
-#       #   run: terraform apply -auto-approve tfplan
+      # Run Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
 
-#   destroy:
-#     name: Terraform Cleanup
-#     runs-on: ubuntu-latest
-#     if: github.event_name == 'push' || github.event.inputs.action == 'destroy' # Trigger only for destroy input
-#     defaults:
-#       run:
-#         shell: bash
-#         working-directory: ./terraform/ecs-fargate
-#     steps:
-#       # Checkout repository
-#       - name: Checkout Repository
-#         uses: actions/checkout@v3
-
-#       # Setup Terraform
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v2
-#         with:
-#           terraform_version: 1.5.6
-
-#       # Initialize Terraform
-#       - name: Terraform Init
-#         run: terraform init
-
-#       # Destroy Terraform Resources
-#       - name: Terraform Destroy
-#         run: terraform destroy -auto-approve
+      # Apply or Destroy based on input
+      - name: Run Terraform Action
+        run: |
+          if [ "${{ github.event.inputs.action }}" == "apply" ]; then
+            echo "Applying Terraform changes..."
+            terraform apply -auto-approve tfplan
+          elif [ "${{ github.event.inputs.action }}" == "destroy" ]; then
+            echo "Destroying Terraform resources..."
+            terraform destroy -auto-approve
+          else
+            echo "Invalid action. Only 'apply' or 'destroy' are supported."
+            exit 1
+          fi
