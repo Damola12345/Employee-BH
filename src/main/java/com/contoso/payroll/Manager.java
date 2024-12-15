@@ -3,6 +3,7 @@ package com.contoso.payroll;
 import java.util.Arrays;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,6 +20,7 @@ public class Manager {
 
 	private @Id @GeneratedValue Long id;
 
+	@Column(unique=true)
 	private String name;
 
 	private @JsonIgnore String password;
