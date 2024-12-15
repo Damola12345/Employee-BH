@@ -153,8 +153,8 @@ resource "aws_network_acl" "db_private_nacl" {
   subnet_ids = [
     aws_subnet.private-subnet-1.id,
     aws_subnet.private-subnet-2.id,
-    aws_subnet.private-subnet-1.id,
-    aws_subnet.private-subnet-2.id
+    aws_subnet.private-subnet-3.id,
+    aws_subnet.private-subnet-4.id
   ]
 
 }
