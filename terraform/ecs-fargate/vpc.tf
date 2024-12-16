@@ -129,33 +129,33 @@ resource "aws_subnet" "private-subnet-4" {
   }
 }
 
-# resource "aws_network_acl" "db_private_nacl" {
-#   vpc_id = aws_vpc.vpc.id
+resource "aws_network_acl" "db_private_nacl" {
+  vpc_id = aws_vpc.vpc.id
 
-#   egress {
-#     protocol   = "-1"
-#     rule_no    = 100
-#     action     = "allow"
-#     cidr_block = "0.0.0.0/0"
-#     from_port  = 0
-#     to_port    = 0
-#   }
+  egress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
 
-#   ingress {
-#     protocol   = "-1"
-#     rule_no    = 100
-#     action     = "allow"
-#     cidr_block = "10.0.0.0/16" # Restrict to the VPC CIDR block or specific IP ranges for security.
-#     from_port  = 0
-#     to_port    = 0
-#   }
+  ingress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0" 
+    from_port  = 0
+    to_port    = 0
+  }
 
-#   subnet_ids = [
-#     aws_subnet.private-subnet-1.id,
-#     aws_subnet.private-subnet-2.id,
-#     aws_subnet.private-subnet-1.id,
-#     aws_subnet.private-subnet-2.id
-#   ]
+  subnet_ids = [
+    aws_subnet.private-subnet-1.id,
+    aws_subnet.private-subnet-2.id,
+    aws_subnet.private-subnet-3.id,
+    aws_subnet.private-subnet-4.id
+  ]
 
-# }
+}
 

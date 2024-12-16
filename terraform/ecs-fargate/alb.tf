@@ -104,7 +104,7 @@ resource "aws_lb_listener_rule" "backend_rule" {
  depends_on = [aws_lb_target_group.backend-tg]
 }
 
-# Rule for /Payroll* with priority 2
+## Rule for /Payroll* with priority 2
 resource "aws_lb_listener_rule" "backend_payroll_rule" {
   listener_arn = aws_lb_listener.alb-listener-ssl-certificate.arn
   action {
@@ -113,7 +113,7 @@ resource "aws_lb_listener_rule" "backend_payroll_rule" {
   }
   condition {
     path_pattern {
-      values = ["/Payroll*"]
+      values = ["/payroll*"]
     }
   }
   priority   = 2

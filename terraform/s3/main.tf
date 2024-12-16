@@ -11,7 +11,7 @@
 
 # provider "aws" {
 #   region  = "eu-west-1"
-#   profile = "terraform-user"
+#   profile = ""
 # }
 
 # resource "aws_dynamodb_table" "terraform_locks" {

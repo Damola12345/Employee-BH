@@ -37,6 +37,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.cors()
 				.and()
 			.authorizeRequests()
+				.antMatchers("/payroll/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 			.httpBasic()
@@ -57,4 +58,3 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return source;
 	}
 }
-

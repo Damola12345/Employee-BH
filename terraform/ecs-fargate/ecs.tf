@@ -43,6 +43,7 @@ resource "aws_ecs_task_definition" "frontend-task" {
    }
  ])
 }
+
 # Backend Task Definition
 resource "aws_ecs_task_definition" "backend-task" {
   family                   = "backend-task"
@@ -72,6 +73,7 @@ resource "aws_ecs_task_definition" "backend-task" {
           awslogs-stream-prefix = "backend"
         }
       }
+      
     }
   ])
 }
@@ -84,8 +86,7 @@ resource "aws_ecs_service" "frontend-service" {
  desired_count   = 1
  launch_type     = "FARGATE"
  network_configuration {
-  #  subnets         = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
-   subnets         = [aws_subnet.public-subnet-1.id, aws_subnet.public-subnet-2.id]
+   subnets         = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
    security_groups = [aws_security_group.container_sg.id]
    assign_public_ip = false
  }
@@ -104,8 +105,7 @@ resource "aws_ecs_service" "backend-service" {
  desired_count   = 1
  launch_type     = "FARGATE"
  network_configuration {
-  #  subnets         = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
-   subnets         = [aws_subnet.public-subnet-1.id, aws_subnet.public-subnet-2.id]
+   subnets         = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
    security_groups = [aws_security_group.container_sg.id]
    assign_public_ip = false
  }
