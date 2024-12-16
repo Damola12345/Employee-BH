@@ -113,7 +113,7 @@ resource "aws_lb_listener_rule" "backend_payroll_rule" {
   }
   condition {
     path_pattern {
-      values = ["/Payroll*"]
+      values = ["/payroll*"]
     }
   }
   priority   = 2

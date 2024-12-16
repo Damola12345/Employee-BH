@@ -1,7 +1,7 @@
 # # configured aws provider with proper credentials
 # provider "aws" {
 #   region  = "eu-west-1"
-#   profile = "terraform-user"
+#   profile = ""
 # }
 
 # # request public certificates from the amazon certificate manager.

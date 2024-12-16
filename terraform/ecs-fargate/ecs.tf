@@ -73,20 +73,7 @@ resource "aws_ecs_task_definition" "backend-task" {
           awslogs-stream-prefix = "backend"
         }
       }
-      environment = [
-        {
-          name  = "DATABASE_HOST"
-          value = "testclouddb.cxyiw0egiwdj.eu-west-1.rds.amazonaws.com"
-        },
-        {
-          name  = "DATABASE_PORT"
-          value = "3306"
-        },
-        {
-          name  = "DATABASE_NAME"
-          value = "hbdb"
-        }
-      ]
+      
     }
   ])
 }
