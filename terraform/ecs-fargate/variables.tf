@@ -65,11 +65,11 @@ variable "memory" {
 }
 
 variable "backend_image" {
-  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/backend-app"
+  default       = "xxxxx.dkr.ecr.eu-west-1.amazonaws.com/backend-app"
   description   = "backend image"
 }
 variable "frontend_image" {
-  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/frontend-app"
+  default       = "xxxxxx.dkr.ecr.eu-west-1.amazonaws.com/frontend-app"
   description   = "frontend image"
 }
 
@@ -93,13 +93,13 @@ variable "multi-az-deployment" {
 }
 
 variable "ssl-certificate-arn" {
-  default       = "arn:aws:acm:eu-west-1:431419854259:certificate/3f972b4c-0b75-4e07-a927-4ee8874dfcc9"
+  default       = "arn:aws:acm:eu-west-1:xxxxxxxx:certificate/xxxxx"
   description   = "SSL Certificate Arn"
   type          = string
 }
 
 variable "domain-name" {
-  default       = "dglidestcl.com"
+  default       = "xxxxxx"
   description   = "The Domain Name"
   type          = string
 }
