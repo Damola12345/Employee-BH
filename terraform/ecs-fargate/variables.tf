@@ -99,7 +99,7 @@ variable "ssl-certificate-arn" {
 }
 
 variable "domain-name" {
-  default       = "xxxxxxxx.com"
+  default       = "dglidestcl.com"
   description   = "The Domain Name"
   type          = string
 }
