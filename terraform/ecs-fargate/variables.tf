@@ -65,11 +65,11 @@ variable "memory" {
 }
 
 variable "backend_image" {
-  default       = "4xxxxxxx.dkr.ecr.eu-west-1.amazonaws.com/backend-ap"
+  default       = "xxxxx.dkr.ecr.eu-west-1.amazonaws.com/backend-app"
   description   = "backend image"
 }
 variable "frontend_image" {
-  default       = "4xxxxxx.dkr.ecr.eu-west-1.amazonaws.com/frontend-ap"
+  default       = "xxxxxx.dkr.ecr.eu-west-1.amazonaws.com/frontend-app"
   description   = "frontend image"
 }
 
@@ -93,13 +93,13 @@ variable "multi-az-deployment" {
 }
 
 variable "ssl-certificate-arn" {
-  default       = "arn:aws:acm:eu-west-1:4xxxxxx:certificate/xxxxxxx"
+  default       = "arn:aws:acm:eu-west-1:xxxxxxxx:certificate/xxxxx"
   description   = "SSL Certificate Arn"
   type          = string
 }
 
 variable "domain-name" {
-  default       = "xxxxxxxx.com"
+  default       = "xxxxxx"
   description   = "The Domain Name"
   type          = string
 }

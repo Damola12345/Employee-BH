@@ -1,9 +1,10 @@
 # name: Deploy to Amazon ECS
 
 # on:
-#   push:
-#     branches:
-#       - ft/develop
+#   workflow_run:
+#     workflows: ["Terraform Pipeline"]
+#     types:
+#     - completed
 
 # jobs:
 #   deploy:
@@ -30,10 +31,10 @@
 #       id: build-frontend-image
 #       env:
 #         ECR_REGISTRY: ${{ steps.login-ecr-frontend.outputs.registry }}
-#         ECR_REPOSITORY: frontend-ap
+#         ECR_REPOSITORY: frontend-app
 #         IMAGE_TAG: latest
 #       run: |
-#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f frontend/dockerfile.frontend frontend/
+#         docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f frontend/dockerfile.frontend frontend/
 #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 #         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
@@ -67,10 +68,10 @@
 #       id: build-backend-image
 #       env:
 #         ECR_REGISTRY: ${{ steps.login-ecr-backend.outputs.registry }}
-#         ECR_REPOSITORY: backend-ap
+#         ECR_REPOSITORY: backend-app
 #         IMAGE_TAG: latest
 #       run: |
-#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f dockerfile.backend .
+#         docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f dockerfile.backend .
 #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 #         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
