@@ -1,10 +1,10 @@
 name: Deploy to Amazon ECS
 
 on:
-    workflow_run:
-      workflows: ["Terraform Pipeline"]
-      types:
-        - completed
+  workflow_run:
+    workflows: ["Terraform Pipeline"]
+    types:
+    - completed
 
 jobs:
   deploy:
