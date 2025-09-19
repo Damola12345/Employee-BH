@@ -38,6 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and()
 			.authorizeRequests()
 				.antMatchers("/payroll/**").permitAll()
+				// .antMatchers("/actuator/**").permitAll() //  allow Prometheus actuator
 				.anyRequest().authenticated()
 				.and()
 			.httpBasic()
