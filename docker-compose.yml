@@ -1,0 +1,236 @@
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "1m"
+    max-file: "1"
+    tag: "{{.Name}}"
+
+x-common-labels: &default-labels
+  logging: "promtail"
+  logging_jobname: "containerlogs"
+  stackname: "docker-monitoring-stack"
+
+networks:
+  monitoring:
+    name: monitoring
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  tempo_data:
+  mysql_data:
+
+services:
+  # Database
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Backend Application - sends data directly to backends
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile.backend
+    container_name: backend
+    ports:
+      - "8080:8080"
+    environment:
+      # Database connection
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-container:3306/mydatabase
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=mypassword
+      
+      # OpenTelemetry - direct to Tempo (no collector)
+      - OTEL_SERVICE_NAME=backend
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      
+      # Application settings
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=backend
+      - ENVIRONMENT=docker
+    volumes:
+      - ./otel.properties:/app/otel.properties:ro
+    networks:
+      - monitoring
+    depends_on:
+      mysql:
+        condition: service_healthy
+      tempo:
+        condition: service_started
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Frontend Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile.frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - monitoring
+    depends_on:
+      backend:
+        condition: service_healthy
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  # Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--log.level=error'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.external-url=http://localhost:9090'
+      - '--web.enable-lifecycle'
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:12.0.1
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_SECURITY_ADMIN_USER: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  # Node Exporter for system metrics
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  # Loki for logs
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./observability/loki/config.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  # Promtail for log collection
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./observability/promtail/config.yml:/etc/promtail/config.yml:ro
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - monitoring
+    depends_on:
+      - loki
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  # Tempo for distributed tracing
+  tempo:
+    image: grafana/tempo:2.7.2
+    container_name: tempo
+    command: 
+      - "-config.file=/etc/tempo.yml"
+      - "--target=all"
+      - "--storage.trace.backend=local"
+      - "--storage.trace.local.path=/var/tempo"
+      - "--auth.enabled=false"
+    ports:
+      - "3200:3200"   # Tempo HTTP
+      - "4317:4317"   # Direct OTLP gRPC from your app
+      - "4318:4318"   # Direct OTLP HTTP from your app
+    volumes:
+      - ./observability/tempo.yml:/etc/tempo.yml:ro
+      - tempo_data:/var/tempo
+    networks:
+      - monitoring
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
