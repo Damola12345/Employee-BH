@@ -1,29 +1,47 @@
-# Use Maven as a build stage
+# Build stage
 FROM maven:3.8.4-openjdk-17 AS build
-
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Maven project files into the container
+# Copy Maven files
 COPY pom.xml .
 COPY src /app/src
 COPY . .
 
+# Pre-fetch dependencies (optional, speeds up builds)
+RUN mvn dependency:go-offline
+
 # Build the application
 RUN mvn clean package -Dmaven.test.skip=true
 
-# Use a minimal JDK runtime image for the final stage
-FROM openjdk:17-jdk-slim
+# Download OpenTelemetry Java Agent in separate stage
+FROM curlimages/curl:8.4.0 AS download
+ARG OTEL_AGENT_VERSION=1.32.0
+RUN curl -L "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_AGENT_VERSION}/opentelemetry-javaagent.jar" \
+    -o /tmp/opentelemetry-javaagent.jar
 
-# Set the working directory inside the container
+# Runtime stage
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 
-# Copy the JAR file from the build stage
+# Copy the JAR from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose the application port
+# Copy the OpenTelemetry agent
+COPY --from=download /tmp/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+
+
+# Create non-root user
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -s /bin/bash -m appuser && \
+    chown -R appuser:appgroup /app
+USER appuser
+
+# Expose the app port
 EXPOSE 8080
 
-# Run the Spring Boot application
-CMD ["java", "-jar", "app.jar"]
+# Run the Spring Boot app with OpenTelemetry
+ENTRYPOINT ["java", \
+  "-javaagent:/app/opentelemetry-javaagent.jar", \
+  "-Dotel.javaagent.configuration-file=/app/otel.properties", \
+  "-jar", "/app/app.jar"]
 
