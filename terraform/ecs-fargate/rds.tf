@@ -22,7 +22,7 @@ resource "aws_db_instance" "database-instance" {
   publicly_accessible     = false
   instance_class          = "${var.database-instance-class}"
   skip_final_snapshot     = true
-  availability_zone       = "eu-west-1a"
+  availability_zone       = "us-east-1a"
   identifier              = "${var.database-instance-identifier}"
   db_subnet_group_name    = aws_db_subnet_group.database-subnet-group.name
   multi_az                = "${var.multi-az-deployment}"
