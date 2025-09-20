@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "frontend-task" {
        logDriver = "awslogs"
        options = {
          awslogs-group         = aws_cloudwatch_log_group.logs.name
-         awslogs-region        = "eu-west-1"
+         awslogs-region        = "us-east-1"
          awslogs-stream-prefix = "frontend"
        }
      }
@@ -69,7 +69,7 @@ resource "aws_ecs_task_definition" "backend-task" {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.logs.name
-          awslogs-region        = "eu-west-1"
+          awslogs-region        = "us-east-1"
           awslogs-stream-prefix = "backend"
         }
       }
