@@ -9,11 +9,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "terraform-ecsapi-state"
+    bucket         = "terraform-ecs-tech4dev"
     key            = "ecs/terraform.tfstate"
     region         = "us-east-1"
     # For state lock
-    dynamodb_table = "terraform-ecs-locks"
+    dynamodb_table = "terraform-ecs-db"
     encrypt        = true
   }
 }

@@ -11,11 +11,11 @@ terraform {
 
 provider "aws" {
   region  = "us-east-1"
-  profile = ""
+  profile = "terraform-user"
 }
 
 resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform-ecs-locks"
+  name         = "terraform-ecs-db"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
@@ -26,7 +26,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "terraform-ecsapi-state"
+  bucket = "terraform-ecs-tech4dev"
 
   # Prevent accidental deletion of this S3 bucket
   lifecycle {
