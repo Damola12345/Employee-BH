@@ -6,7 +6,7 @@ variable "vpc-cidr" {
 }
 
 variable "availability_zones" {
-  default = ["eu-west-1a", "eu-west-1b"]
+  default = ["us-east-1a", "us-east-1b"]
 }
 
 
@@ -65,11 +65,11 @@ variable "memory" {
 }
 
 variable "backend_image" {
-  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/backend-app"
+  default       = "431419854259.dkr.ecr.us-east-1.amazonaws.com/backend-app"
   description   = "backend image"
 }
 variable "frontend_image" {
-  default       = "431419854259.dkr.ecr.eu-west-1.amazonaws.com/frontend-app"
+  default       = "431419854259.dkr.ecr.us-east-1.amazonaws.com/frontend-app"
   description   = "frontend image"
 }
 
@@ -93,7 +93,7 @@ variable "multi-az-deployment" {
 }
 
 variable "ssl-certificate-arn" {
-  default       = "arn:aws:acm:eu-west-1:431419854259:certificate/3f972b4c-0b75-4e07-a927-4ee8874dfcc9"
+  default       = "arn:aws:acm:us-east-1:431419854259:certificate/3f972b4c-0b75-4e07-a927-4ee8874dfcc9"
   description   = "SSL Certificate Arn"
   type          = string
 }
