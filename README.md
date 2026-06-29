@@ -80,7 +80,6 @@ This project demonstrates how to:
 * Modular Terraform configuration
 * Automatic infrastructure provisioning
 
-
 # Engineering Decisions
 
 Several design decisions were made to keep the platform production-oriented while remaining simple to deploy.
@@ -100,7 +99,6 @@ GitHub Actions enables automated build, test, and deployment workflows directly 
 ### Why Amazon RDS?
 
 Amazon RDS provides a managed relational database service with automated backups and operational simplicity.
-
 
 # Security Considerations
 
