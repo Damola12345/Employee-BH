@@ -5,7 +5,7 @@ This project showcases how to provision cloud infrastructure with Terraform, con
 
 > **Purpose**
 >
-> This repository demonstrates an end-to-end DevOps workflow—from infrastructure provisioning to application deployment—using automation, Infrastructure as Code, and cloud-native services.
+> This repository demonstrates an end-to-end DevOps workflow from infrastructure provisioning to application deployment using automation, Infrastructure as Code, and cloud-native services.
 
 # Architecture
 
@@ -116,6 +116,3 @@ The platform incorporates several production-inspired security practices, includ
 # Getting Started
 
 Deployment instructions and infrastructure documentation will be available under the `docs/` directory.
-
-# License
-This repository is provided for educational and portfolio purposes.
