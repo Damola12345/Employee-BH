@@ -93,7 +93,7 @@ variable "multi-az-deployment" {
 }
 
 variable "ssl-certificate-arn" {
-  default       = "arn:aws:acm:us-east-1:xxxxxxxxx:certificate/aec25e10-5789-409a-937e-7730f62aeda2"
+  default       = "arn:aws:acm:us-east-1:xxxxxxxxx:certificate/aec25e10-5789-409a-937e-xxxxxx2aeda2"
   description   = "SSL Certificate Arn"
   type          = string
 }

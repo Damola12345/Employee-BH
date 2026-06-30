@@ -1,13 +1,13 @@
 # configured aws provider with proper credentials
 provider "aws" {
   region  = "us-east-1"
-  profile = "terraform-user"
+  profile = ""
 }
 
 # request public certificates from the amazon certificate manager.
 resource "aws_acm_certificate" "acm_certificate" {
-  domain_name               = "dglidestcl.com"
-  subject_alternative_names = ["*.dglidestcl.com"]
+  domain_name               = "blah.com"
+  subject_alternative_names = ["*.blah.com"]
   validation_method         = "DNS"
 
   lifecycle {
@@ -17,7 +17,7 @@ resource "aws_acm_certificate" "acm_certificate" {
 
 # get details about a route 53 hosted zone
 data "aws_route53_zone" "route53_zone" {
-  name         = "dglidestcl.com"
+  name         = "blah.com"
   private_zone = false
 }
 
